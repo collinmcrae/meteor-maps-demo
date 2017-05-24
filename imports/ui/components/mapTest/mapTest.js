@@ -3,6 +3,7 @@
  */
 import './mapTest.html';
 import {GoogleMaps} from 'meteor/dburles:google-maps';
+import {Session} from 'meteor/session';
 
 Template.mapTest.onCreated(function(){
     //Put publications / subscription information here
@@ -23,25 +24,51 @@ Template.mapTest.onCreated(function(){
                 title: marker.title,
                 clickable: true
             });
+            let infowindow = new google.maps.InfoWindow({
+                content: '<div><h1>I am the info!</h1><span style="color:red">Some bad dudes</span></div>'
+            });
+            temp.addListener('click', function(event){
+                infowindow.open(map.instance, temp);
+            });
         });
+
         google.maps.event.addListener(map.instance, 'click', function(event) {
+            //Check what the type of marker is
             let mylat = event.latLng.lat();
             let mylng = event.latLng.lng();
+
             let temp = new google.maps.Marker({
                 position: new google.maps.LatLng(mylat,mylng),
                 map: map.instance,
-                clickable: true,
-                draggable: true
+                clickable: true
             });
 
-            let myLine = new google.maps.Polyline({
-                path : [{lat: 5, lng: 112}, {lat: mylat, lng: mylng}],
-                geodesic: true,
-                strokeColor: '#000000',
-                strokeOpacity: 1.0,
-                strokeWeight: 2
+            let infowindow = new google.maps.InfoWindow({
+                content: 'Hello I am info window change me into HTML!!!!'
             });
-            myLine.setMap(map.instance);
+            temp.addListener('click', function(event){
+                infowindow.open(map.instance, temp);
+            });
+
+            //Maybe set lines or no lines
+            if(Session.get('marker-lines')){
+                let myLine = new google.maps.Polyline({
+                    path : [{lat: 5, lng: 112}, {lat: mylat, lng: mylng}],
+                    geodesic: true,
+                    strokeColor: '#000000',
+                    strokeOpacity: 1.0,
+                    strokeWeight: 2
+                });
+                myLine.setMap(map.instance);
+            }
+        });
+
+        google.maps.event.addListener(map.instance, 'rightclick', function(event) {
+            //Check what the type of marker is
+            let mylat = event.latLng.lat();
+            let mylng = event.latLng.lng();
+
+            //ability to choose icon
         });
     });
 });

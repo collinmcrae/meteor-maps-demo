@@ -14,6 +14,13 @@ FlowRouter.route('/', {
   },
 });
 
+FlowRouter.route('/line-demo', {
+    name: 'App.line-demo',
+    action() {
+      BlazeLayout.render('App_body', {main: 'mapTest'});
+    },
+});
+
 FlowRouter.notFound = {
   action() {
     BlazeLayout.render('App_body', { main: 'App_notFound' });
